@@ -169,7 +169,7 @@ export default function FinalTables() {
   // States for Threshold Values
   const [threshold1, setThreshold1] = useState(null); // For Row 1
   const [threshold2, setThreshold2] = useState(null); // For Row 2
-  const [threshold4, setThreshold4] = useState(null); // For Row 4
+  const [threshold3, setThreshold3] = useState(null); // For Row 3
   const [threshold5, setThreshold5] = useState(99.899); // For Row 5
   const [threshold95, setThreshold95] = useState(95); // For Row 10
   const [threshold90, setThreshold90] = useState(90); // For Row 7
@@ -178,7 +178,7 @@ export default function FinalTables() {
   const [achievedKpiWithWeightage, setAchievedKpiWithWeightage] = useState({
     row1: 0,
     row2: 0,
-    row4: 0,
+    row3: 0,
     row5: 0,
     row6: 0,
     row7: 0,
@@ -200,7 +200,7 @@ export default function FinalTables() {
   const columnsAchievedRef = useRef({
     row1: Array(columns.length).fill(0),
     row2: Array(columns.length).fill(0),
-    row4: Array(columns.length).fill(0),
+    row3: Array(columns.length).fill(0),
     row5: Array(columns.length).fill(0),
     row6: Array(columns.length).fill(0),
     row7: Array(columns.length).fill(0),
@@ -464,17 +464,17 @@ export default function FinalTables() {
       }
     }
 
-    // **Extract threshold1 from Row #1's descriptionOfKPI**
-    const row4 = kpiData.find((o) => o.rowNumber === 4 || o.no === 4);
-    if (row4 && row4.descriptionOfKPI) {
-      const match4 = row4.descriptionOfKPI.match(/Above\s+(\d+(\.\d+)?)%/i);
-      if (match4 && match4[1] && !isNaN(match4[1])) {
-        const extractedThreshold4 = parseFloat(match4[1]);
-        setThreshold4(extractedThreshold4);
-        console.log("Extracted threshold4:", extractedThreshold4);
+    // **Extract threshold3 from Row #3's descriptionOfKPI**
+    const row3 = kpiData.find((o) => o.rowNumber === 3 || o.no === 3);
+    if (row3 && row3.descriptionOfKPI) {
+      const match3= row3.descriptionOfKPI.match(/Above\s+(\d+(\.\d+)?)%/i);
+      if (match3&& match3[1] && !isNaN(match3[1])) {
+        const extractedThreshold3 = parseFloat(match3[1]);
+        setThreshold3(extractedThreshold3);
+        console.log("Extracted threshold3:", extractedThreshold3);
       } else {
         console.warn(
-          "Failed to extract threshold1 from Row #4's descriptionOfKPI"
+          "Failed to extract threshold3 from Row #3's descriptionOfKPI"
         );
       }
     }
@@ -696,10 +696,10 @@ export default function FinalTables() {
         )
       : 0;
 
-    const row4 = kpiRes[3]
+    const row3 = kpiRes[3]
       ? rAchievedW(
           kpiRes[3].percentages["NW/WPC"],
-          threshold4,
+          threshold3,
           parseFloat(
             kpiData.find(
               (item) => item.no === (kpiRes[3].no || kpiRes[3].rowNumber)
@@ -731,7 +731,7 @@ export default function FinalTables() {
     setAchievedKpiWithWeightage({
       row1: parseFloat(row1),
       row2: parseFloat(row2),
-      row4: parseFloat(row4),
+      row3: parseFloat(row3),
       row5: parseFloat(row5),
       row6: parseFloat(row6),
       row7: parseFloat(row7),
@@ -740,7 +740,7 @@ export default function FinalTables() {
     console.log("Achieved KPI with Weightage:", {
       row1: parseFloat(row1),
       row2: parseFloat(row2),
-      row4: parseFloat(row4),
+      row3: parseFloat(row3),
       row5: parseFloat(row5),
       row6: parseFloat(row6),
       row7: parseFloat(row7),
@@ -755,7 +755,7 @@ export default function FinalTables() {
     kpiData,
     threshold1,
     threshold2,
-    threshold4,
+    threshold3,
   ]);
 
   // ============= Render Helpers for Achieved KPI calculations =============
@@ -814,7 +814,7 @@ export default function FinalTables() {
 
   // ============= Rows for the main table =============
 
-  // 1) KPI Rows (#1, #2)
+  // 1) KPI Rows (#1, #2,#3)
   const renderKpiRow = (kpiItem, rowIndex) => {
     if (!kpiItem) return null;
 
@@ -826,15 +826,15 @@ export default function FinalTables() {
     } else if (rowIndex === 2) {
       threshold = threshold2;
       rowKey = "row2";
-    } else if (rowIndex === 4) {
-      threshold = threshold4;
-      rowKey = "row4";
+    } else if (rowIndex === 3) {
+      threshold = threshold3;
+      rowKey = "row3";
     } else {
       threshold = null;
     }
 
     if (
-      (rowIndex === 1 || rowIndex === 2 || rowIndex === 4) &&
+      (rowIndex === 1 || rowIndex === 2 || rowIndex === 3) &&
       threshold === null
     ) {
       return null;
@@ -1143,7 +1143,7 @@ export default function FinalTables() {
   // =====================
   const [row12Data, setRow12Data] = useState([]);
   useEffect(() => {
-    const rowKeys = ["row1", "row2", "row4", "row5", "row6", "row7", "row10"];
+    const rowKeys = ["row1", "row2", "row3", "row5", "row6", "row7", "row10"];
     const colSums = columns.map((_, i) => {
       let sum = 0;
       rowKeys.forEach((rk) => {
@@ -1372,7 +1372,7 @@ export default function FinalTables() {
     // Add dynamic rows to match static table row indices
     kpiRes.forEach((kpiItem, index) => {
       const threshold =
-        index === 0 ? threshold1 : index === 1 ? threshold2 : threshold4;
+        index === 0 ? threshold1 : index === 1 ? threshold2 : threshold3;
       const wpcVal = kpiItem.percentages["NW/WPC"] || "0.00";
       const wg =
         parseFloat(
@@ -1768,8 +1768,7 @@ dynamicTableRows[3] = [
                 <tr key="empty-row-3">
                   <td></td>
                 </tr>
-                {/* 4) empty row */}
-                {renderFinalDataRow()}
+               
 
                 {/* 5) Final Data Row (row #5) */}
                 {renderFinalDataRow()}
@@ -1779,6 +1778,9 @@ dynamicTableRows[3] = [
 
                 {/* ServFulkOk Row (row #07)*/}
                 {renderServFulOkRow()}
+
+                {/* 10) Current Month Row */}
+                {renderCurrentMonthRow()}
 
                 {/* 11) Sum of all Achieved KPI with Weightage => PER COLUMN */}
                 {renderSumOfAchievedKpiWithWeightageRow()}
